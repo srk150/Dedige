@@ -1,0 +1,172 @@
+<%- include('./partials/header'); -%> <%- include('./partials/sidebar'); -%>
+        <!-- DataTables -->
+        <link rel="stylesheet" href="<%= baseUrl %>/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" />
+        <link rel="stylesheet" href="<%= baseUrl %>/plugins/datatables-responsive/css/responsive.bootstrap4.min.css" />
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Partners</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">Partners</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header" style="float: right">
+                                <h3 class="card-title">
+                                    <a href="/addPartner" class="btn btn-primary">Add Partners</a>
+                                </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="alert alert-success" style="display: none"></div>
+                                <div class="alert alert-danger" style="display: none"></div>
+
+                                <table id="services" class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Sno</th>
+                                            <th>Title</th>
+                                            <th>Description</th>
+                                            <th>Image</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (partnersDatas.length> 0) { var i= 1; %>
+                                            <% partnersDatas.forEach(portf=>
+                                                {
+                                                const dbimgnames = portf.partner_img.split(', ');
+                                                %>
+                                                <tr data-partner-id="<%= portf.pid %>">
+                                                    <td>
+                                                        <%= i %>
+                                                    </td>
+                                                    <td>
+                                                        <%= portf.title %>
+                                                    </td>
+                                                    <td>
+                                                        <%= portf.descp %>
+                                                    </td>
+
+                                                    <td>
+                                                        <% dbimgnames.forEach(filename=> { %>
+                                                            <img src="../partners/<%= filename %>" width="100px"
+                                                                height="100px" />
+                                                            <% }); %>
+                                                    </td>
+
+                                                    <td>
+                                                        <button class="btn btn-danger delete-partner-btn"
+                                                            data-partner-id="<%= portf.pid %>">
+                                                            Delete
+                                                        </button>
+                                                        <a href="/editPartner/<%= portf.pid %>"
+                                                            class="btn btn-success edit-partner-btn">
+                                                            Edit
+                                                        </a>
+                                                    </td>
+                                                </tr>
+
+                                                <% i++; }); %>
+                                                    <% } else { %>
+                                                        <p>No portfolio found.</p>
+                                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+
+                        <!-- /.card -->
+
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+
+        <%- include('./partials/footer'); -%>
+
+            <!-- DataTables -->
+            <script src="<%= baseUrl %>/plugins/datatables/jquery.dataTables.min.js"></script>
+            <script src="<%= baseUrl %>/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+            <script src="<%= baseUrl %>/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+            <script src="<%= baseUrl %>/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+            <script>
+                $(function () {
+                    $("#services").DataTable({});
+                });
+
+                $(document).ready(function () {
+                    $(document).on("click", ".delete-partner-btn", function () {
+                        const partnerId = $(this).data("partner-id");
+
+                        // Display the SweetAlert confirmation dialog
+                        Swal.fire({
+                            title: "Are you sure?",
+                            text: "You are about to delete the partner.",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, delete it!",
+                            cancelButtonText: "Cancel",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    type: "DELETE",
+                                    url: "/delpartner/" + partnerId,
+
+                                    success: function (response) {
+                                        // Display success message or redirect to another page
+                                        if (response) {
+                                            $(".alert-success")
+                                                .text("Delete Successfully!")
+                                                .fadeIn()
+                                                .delay(1000)
+                                                .fadeOut();
+
+                                            // Remove the deleted data row from the table
+                                            $(`tr[data-partner-id="${partnerId}"]`).remove();
+                                        } else {
+                                            $(".alert-danger")
+                                                .text(response.message)
+                                                .fadeIn()
+                                                .delay(1000)
+                                                .fadeOut();
+                                        }
+                                    },
+                                    error: function (err) {
+                                        // Display error message
+                                        $(".alert-danger")
+                                            .text(err.responseJSON.message)
+                                            .fadeIn()
+                                            .delay(1000)
+                                            .fadeOut();
+                                    },
+                                });
+                            }
+                        });
+                    });
+                });
+            </script>
