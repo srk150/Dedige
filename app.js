@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 const moment = require("moment");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 const userMiddleware = require('./middleware/session_value');
 // Use cookie-parser middleware
@@ -27,13 +27,14 @@ app.use(
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 // Set the base URL variable
-app.locals.baseUrl = "http://localhost:3000/";
+app.locals.baseUrl = process.env.baseUrl;
 // Configure middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Use your custom middleware to fetch user info
 app.use(userMiddleware);
+
 // Set up routes for controller
 const indexRoute = require("./routes/index");
 const loginRoute = require("./routes/login");
@@ -89,6 +90,7 @@ const webApiRoutes = require("./routes/webApi");
 app.use("/webcommon/api", webApiRoutes);
 
 // Start the server
-app.listen(port, () => {
-  console.log(`Server running on port ${app.locals.baseUrl}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on ${process.env.baseUrl}`);
+
 });

@@ -6,12 +6,13 @@ var connection = mysql.createConnection({
   password: "",
   database: "portfolio_web",
 });
+
 connection.connect(function (error) {
-  if (!!error) {
-    console.log(error);
-  } else {
-    console.log("Database Connected Successfully..!!");
+  if (error) {
+    console.error('Error connecting to database: ' + error.stack);
+    return;
   }
+  console.log("Database Connected Successfully..!!");
 });
 
 module.exports = connection;
