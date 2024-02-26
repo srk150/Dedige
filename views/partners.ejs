@@ -66,20 +66,26 @@
 
                                                     <td>
                                                         <% dbimgnames.forEach(filename=> { %>
-                                                            <img src="../partners/<%= filename %>" width="100px"
-                                                                height="100px" />
+                                                            <img src="../partners/<%= filename %>" width="90px"
+                                                                height="80px"
+                                                                style="display: inline-block; margin-right: 5px;"
+                                                                class="img-fluid" />
                                                             <% }); %>
                                                     </td>
 
                                                     <td>
-                                                        <button class="btn btn-danger delete-partner-btn"
-                                                            data-partner-id="<%= portf.pid %>">
-                                                            Delete
-                                                        </button>
-                                                        <a href="/editPartner/<%= portf.pid %>"
-                                                            class="btn btn-success edit-partner-btn">
-                                                            Edit
-                                                        </a>
+                                                        <div class="btn-group">
+
+                                                            <button class="btn btn-danger delete-partner-btn"
+                                                                data-partner-id="<%= portf.pid %>">
+                                                                Delete
+                                                            </button>
+                                                            <a href="/editPartner/<%= portf.pid %>"
+                                                                class="btn btn-success edit-partner-btn">
+                                                                Edit
+                                                            </a>
+                                                        </div>
+
                                                     </td>
                                                 </tr>
 

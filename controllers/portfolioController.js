@@ -110,12 +110,21 @@ const delportfolio = (req, res) => {
               res.status(401).json({ message: err });
             } else {
               //pimg delete
-              const dbimgname = results[0].pimg;
+              // const dbimgname = results[0].pimg;
 
-              const imagePath = `./public/portfolio/${dbimgname}`;
-              if (dbimgname != "noImg.png") {
-                deleteImageFile(imagePath);
-              }
+              // const imagePath = `./public/portfolio/${dbimgname}`;
+              // if (dbimgname != "noImg.png") {
+              //   deleteImageFile(imagePath);
+              // }
+
+              const dbimgnameportfolio = results[0].pimg.split(', ');
+              dbimgnameportfolio.forEach(filename3 => {
+                const imagePath3 = `./public/portfolio/${filename3}`;
+                if (filename3 != "noImg.png") {
+                  deleteImageFile(imagePath3);
+                }
+              });
+
 
               //logo image delete
               const dbimgLogo = results[0].logo.split(', ');
@@ -142,7 +151,7 @@ const delportfolio = (req, res) => {
 // insert Portfolio
 const insertPortfolio = (req, res) => {
 
-  upload.fields([{ name: 'pimg', maxCount: 1 }, { name: 'logo', maxCount: 5 }])(req, res, (err) => {
+  upload.fields([{ name: 'pimg', maxCount: 5 }, { name: 'logo', maxCount: 5 }])(req, res, (err) => {
 
     if (err instanceof multer.MulterError) {
 
@@ -184,13 +193,15 @@ const insertPortfolio = (req, res) => {
             if (rows.length <= 0) {
 
               const logoImage = req.files['logo'].map(file => file.filename);
-              const partnerImages = req.files['pimg'] ? req.files['pimg'][0].filename : "noImg.png";
+              const partnerImages = req.files['pimg'].map(file => file.filename);
+              // const partnerImages = req.files['pimg'] ? req.files['pimg'][0].filename : "noImg.png";
 
               var form_data = {
                 title: title,
                 descp: descp,
                 logo: logoImage.join(', '),
-                pimg: partnerImages
+                pimg: partnerImages.join(', '),
+                // pimg: partnerImages
               };
 
               dbConn.query(
@@ -224,7 +235,7 @@ const insertPortfolio = (req, res) => {
 // update portfolio
 const updatePortfolio = function (req, res) {
 
-  upload.fields([{ name: 'pimg', maxCount: 1 }, { name: 'logo', maxCount: 5 }])(req, res, (err) => {
+  upload.fields([{ name: 'pimg', maxCount: 5 }, { name: 'logo', maxCount: 5 }])(req, res, (err) => {
 
     if (err instanceof multer.MulterError) {
       res.status(500).json({ message: "An error occurred during file upload." });
@@ -262,13 +273,15 @@ const updatePortfolio = function (req, res) {
 
               if (req.files['pimg'] && req.files['logo']) {
 
-                const partnerImages = req.files['pimg'] ? req.files['pimg'][0].filename : "noImg.png";
+                // const partnerImages = req.files['pimg'] ? req.files['pimg'][0].filename : "noImg.png";
+                const partnerImages = req.files['pimg'].map(file => file.filename);
                 const logoImage = req.files['logo'].map(file => file.filename);
 
                 var form_data = {
                   title: title,
                   descp: descp,
-                  pimg: partnerImages,
+                  // pimg: partnerImages,
+                  pimg: partnerImages.join(', '),
                   logo: logoImage.join(', '),
                 };
 
@@ -283,11 +296,21 @@ const updatePortfolio = function (req, res) {
                     if (results.length > 0) {
 
                       //pimg image delete
-                      const dbimgname = results[0].pimg;
-                      const imagePath = `./public/portfolio/${dbimgname}`;
-                      if (dbimgname != "noImg.png") {
-                        deleteImageFile(imagePath);
-                      }
+                      // const dbimgname = results[0].pimg;
+                      // const imagePath = `./public/portfolio/${dbimgname}`;
+                      // if (dbimgname != "noImg.png") {
+                      //   deleteImageFile(imagePath);
+                      // }
+
+
+                      const dbimgnameportfolio = results[0].pimg.split(', ');
+                      dbimgnameportfolio.forEach(filename3 => {
+                        const imagePath3 = `./public/portfolio/${filename3}`;
+                        if (filename3 != "noImg.png") {
+                          deleteImageFile(imagePath3);
+                        }
+                      });
+
 
                       //logo image delete
                       const dbimgLogo = results[0].logo.split(', ');
@@ -307,12 +330,15 @@ const updatePortfolio = function (req, res) {
 
               } else if (req.files['pimg'] && !req.files['logo']) {
 
-                const partnerImages = req.files['pimg'] ? req.files['pimg'][0].filename : "noImg.png";
+                // const partnerImages = req.files['pimg'] ? req.files['pimg'][0].filename : "noImg.png";
+                const partnerImages = req.files['pimg'].map(file => file.filename);
 
                 var form_data = {
                   title: title,
                   descp: descp,
-                  pimg: partnerImages,
+                  // pimg: partnerImages,
+                  pimg: partnerImages.join(', '),
+
                 };
 
                 // Get the image filename from the database
@@ -323,11 +349,21 @@ const updatePortfolio = function (req, res) {
                     if (error) throw error;
 
                     if (results.length > 0) {
-                      const dbimgname = results[0].pimg;
-                      const imagePath = `./public/portfolio/${dbimgname}`;
-                      if (dbimgname != "noImg.png") {
-                        deleteImageFile(imagePath);
-                      }
+
+                      const dbimgnameportfolio = results[0].pimg.split(', ');
+                      dbimgnameportfolio.forEach(filename3 => {
+                        const imagePath3 = `./public/portfolio/${filename3}`;
+                        if (filename3 != "noImg.png") {
+                          deleteImageFile(imagePath3);
+                        }
+                      });
+
+
+                      // const dbimgname = results[0].pimg;
+                      // const imagePath = `./public/portfolio/${dbimgname}`;
+                      // if (dbimgname != "noImg.png") {
+                      //   deleteImageFile(imagePath);
+                      // }
                     }
                   }
                 );
