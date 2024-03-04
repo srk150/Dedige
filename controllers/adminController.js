@@ -8,17 +8,20 @@ const bcrypt = require("bcrypt");
 
 const nodemailer = require("nodemailer");
 let dotenv = require("dotenv").config();
+const net = require('net');
 
 // email transport
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465, // Gmail SMTP port
-  secure: true,
+  host: 'mail.didige.in',
+  port: 465,
+  secure: true, // Enable TLS/SSL encryption
   auth: {
-    user: process.env.Smtp_email,
-    pass: process.env.Smtp_passwrod,
+    user: "info@didige.in",
+    pass: "didige12345",
   },
 });
+
+
 
 
 //file storage
@@ -623,6 +626,8 @@ function sendEmail(transporter, form_data, subject, html, callback) {
   );
 }
 
+
+
 module.exports = {
   createCategory,
   delCategory,
@@ -636,4 +641,5 @@ module.exports = {
   AdminSettings,
   accessAdmin,
   approveReviews,
+
 };

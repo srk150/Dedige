@@ -13,14 +13,16 @@ let dotenv = require("dotenv").config();
 
 // email transport
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465, // Gmail SMTP port
-  secure: true,
+  host: 'mail.didige.in',
+  port: 465,
+  secure: true, // Enable TLS/SSL encryption
   auth: {
-    user: process.env.Smtp_email,
-    pass: process.env.Smtp_passwrod,
+    user: "info@didige.in",
+    pass: "didige12345",
   },
 });
+
+
 
 
 //for path files using multer
@@ -93,6 +95,7 @@ router.post("/contactApiForAmin", function (req, res) {
                   .status(500)
                   .send("An error occurred while sending the admin email.");
               }
+
 
               // Render the email template using EJS for user
               req.app.render(

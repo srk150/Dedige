@@ -55,7 +55,6 @@ app.get("/admin/contact", adminController.contact);
 app.post("/contact_user", adminController.contact_user);
 app.get("/settings", adminController.AdminSettings);
 
-
 //portfolioController routes
 app.get("/portfolio", portfolioController.portfolio);
 app.get("/addPortfolio", portfolioController.addPortfolio);
