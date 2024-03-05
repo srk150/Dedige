@@ -15,7 +15,7 @@ let dotenv = require("dotenv").config();
 const transporter = nodemailer.createTransport({
   host: 'mail.didige.in',
   port: 465,
-  secure: true, // Enable TLS/SSL encryption
+  secure: true, // TLS/SSL, false, true  smtpout.secureserver.net, mail.didige.in
   auth: {
     user: "info@didige.in",
     pass: "didige12345",
@@ -38,7 +38,65 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+//contact testEmail
+
+router.get("/testEmail", function (req, res) {
+
+  // Create a transporter object using SMTP transport
+  let transporter = nodemailer.createTransport({
+    host: 'localhost',
+    port: 25,
+    secure: false,
+    auth: {
+      user: 'info@didige.in',
+      pass: 'didige12345'
+    }
+  });
+
+
+  //   const transporter = nodemailer.createTransport({
+  //     host: 'localhost',
+  //     port: 25,
+  //     secure: false, // no SSL
+  //     tls: {
+  //         rejectUnauthorized: false // not checking server identity, which may be necessary for localhost
+  //     }
+  // });
+
+  // let transporter = nodemailer.createTransport({
+  //   host: 'mail.didige.in', // Your localhost
+  //   port: 465, // Port 25 for SMTP
+  //   secure: false, // No SSL
+  //   auth: {
+  //     user: 'info@didige.in',
+  //     pass: 'didige12345'
+  //   }
+  // });
+
+
+  // Define email options
+  let mailOptions = {
+    from: 'info@didige.in',
+    to: 'sharukh24524@gmail.com',
+    subject: 'Test Email',
+    text: 'Hello, this is a test email!'
+  };
+
+  // Send email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log('Error occurred:', error);
+    }
+    console.log('Message sent:', info.response);
+    console.log('Message sent:', info);
+  });
+
+});
+
+
+
 //contact mail for admin
+
 router.post("/contactApiForAmin", function (req, res) {
 
   const { email, mobile, request } = req.body;
@@ -121,6 +179,8 @@ router.post("/contactApiForAmin", function (req, res) {
                             .status(500)
                             .send("An error occurred while sending the user email.");
                         }
+                        console.error(userInfo);
+
 
                         res.json({ message: "Successfully sent the enquiry", status: "true" });
                       }
