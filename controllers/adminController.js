@@ -1,28 +1,16 @@
 var dbConn = require("../config/db");
+const nodemailer = require("nodemailer");
 
 // Import required modules
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const ejs = require('ejs');
+
 const bcrypt = require("bcrypt");
 
-const nodemailer = require("nodemailer");
 let dotenv = require("dotenv").config();
 const net = require('net');
-
-// email transport
-const transporter = nodemailer.createTransport({
-  host: 'mail.didige.in',
-  port: 465,
-  secure: true, // Enable TLS/SSL encryption
-  auth: {
-    user: "info@didige.in",
-    pass: "didige12345",
-  },
-});
-
-
-
 
 //file storage
 const storage = multer.diskStorage({
@@ -434,46 +422,57 @@ const contact_user = (req, res) => {
   }
 
   if (!errors) {
-    // console.log(process.env.Smtp_email + "ok!");
 
-    var templateData = {
-      to_email: email,
-      name: name,
-      subject: subject,
-      messages: msg,
+    // Create a transporter object using SMTP transport
+    let transporter = nodemailer.createTransport({
+      host: process.env.Smtp_host,
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.Smtp_email,
+        pass: process.env.Smtp_passwrod
+      }
+    });
+
+
+    // Define email options
+    let mailOptions = {
+      from: process.env.Smtp_email,
+      to: email, //admin mail
+      subject: subject
     };
 
-    // Render the email template using EJS
-    req.app.render(
-      "template/adminNotice",
-      templateData,
-      (error, renderedTemplate) => {
-        if (error) {
-          console.error(error);
-          return res
-            .status(500)
-            .send("An error occurred while rendering the email template.");
-        } else {
-          // Send the email using Nodemailer
-          sendEmail(
-            transporter,
-            email,
-            subject,
-            renderedTemplate,
-            (sendError, info) => {
-              if (sendError) {
-                console.error(sendError);
-                return res
-                  .status(500)
-                  .send("An error occurred while sending the email.");
-              }
+    // Render EJS template file
+    const emailTemplatePath = path.join(__dirname, '..', 'views', 'template', 'adminNotice.ejs');
 
-              res.json({ message: true });
-            }
-          );
-        }
+    // Render EJS template file
+    ejs.renderFile(emailTemplatePath, { to_email: email, subject: subject, messages: msg, name: name, }, (err, data) => {
+
+
+      if (err) {
+        console.error('Error rendering email template:', err);
+        res.status(500).json({ message: 'Internal server error' });
+        return;
       }
-    );
+
+      // Set HTML content for email
+      mailOptions.html = data;
+
+      // Send email
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error('Error occurred:', error);
+          res.status(500).json({ message: 'Error sending email' });
+          return;
+        }
+        console.log('Message sent:', info.response);
+        // console.log('Message sent:', info);
+        res.json({ message: true });
+        // res.status(200).json({ message: 'Successfully sent the enquiry!', status: "true" });
+
+      });
+    });
+
   }
 };
 
