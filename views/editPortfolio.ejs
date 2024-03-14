@@ -63,6 +63,12 @@
                           multiple />
                       </div>
 
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Type</label>
+                        <input type="number" class="form-control" name="type" id="type" value="<%= portf.type %>"
+                          placeholder="Enter type" />
+                      </div>
+
                     </div>
                     <!-- /.card-body -->
 
@@ -95,6 +101,7 @@
 
           var title = $("#title").val();
           var descp = $("#descp").val();
+          var type = $("#type").val();
 
           if (title == '') {
             $(".alert-danger")
@@ -116,11 +123,22 @@
             return false;
           }
 
+          if (type == '') {
+            $(".alert-danger")
+              .text("Type is required!")
+              .fadeIn()
+              .delay(1000)
+              .fadeOut();
+
+            return false;
+          }
+
 
           var formData = new FormData();
           formData.append("title", $("#title").val());
           formData.append("descp", $("#descp").val());
           formData.append("pid", $("#pid").val());
+          formData.append("type", $("#type").val());
 
           var files = $("#logo")[0].files;
           for (var i = 0; i < files.length; i++) {

@@ -162,7 +162,7 @@ const insertPortfolio = (req, res) => {
 
     } else {
 
-      const { title, descp } = req.body;
+      const { title, descp, type } = req.body;
 
       let errors = false;
 
@@ -199,6 +199,7 @@ const insertPortfolio = (req, res) => {
               var form_data = {
                 title: title,
                 descp: descp,
+                type: type,
                 logo: logoImage.join(', '),
                 pimg: partnerImages.join(', '),
                 // pimg: partnerImages
@@ -243,7 +244,7 @@ const updatePortfolio = function (req, res) {
       res.status(500).json({ message: "An unknown error occurred during file upload." });
     } else {
 
-      const { title, descp, pid } = req.body;
+      const { title, descp, pid, type } = req.body;
       let errors = false;
 
       // if (title == "") {
@@ -280,6 +281,7 @@ const updatePortfolio = function (req, res) {
                 var form_data = {
                   title: title,
                   descp: descp,
+                  type: type,
                   // pimg: partnerImages,
                   pimg: partnerImages.join(', '),
                   logo: logoImage.join(', '),
@@ -336,6 +338,7 @@ const updatePortfolio = function (req, res) {
                 var form_data = {
                   title: title,
                   descp: descp,
+                  type: type,
                   // pimg: partnerImages,
                   pimg: partnerImages.join(', '),
 
@@ -374,6 +377,7 @@ const updatePortfolio = function (req, res) {
                 var form_data = {
                   title: title,
                   descp: descp,
+                  type: type,
                   logo: logoImage.join(', '),
                 };
 
@@ -401,6 +405,7 @@ const updatePortfolio = function (req, res) {
                 var form_data = {
                   title: title,
                   descp: descp,
+                  type: type,
                 };
               }
 
