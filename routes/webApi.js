@@ -28,74 +28,129 @@ const upload = multer({ storage: storage });
 
 //contact mail for admin
 router.post("/contactApiForAmin", function (req, res) {
-
   const { email, mobile, request } = req.body;
 
-  let errors = false;
-
-  if (email == "") {
-    errors = true;
-    res.status(401).json({ message: "Email is empty!" });
-  } else if (mobile == "") {
-    errors = true;
-    res.status(401).json({ message: "Mobile is empty!" });
-  } else if (request == "") {
-    errors = true;
-    res.status(401).json({ message: "Request is empty!" });
+  if (!email) {
+    return res.status(401).json({ message: "Email is empty!" });
+  } else if (!mobile) {
+    return res.status(401).json({ message: "Mobile is empty!" });
+  } else if (!request) {
+    return res.status(401).json({ message: "Request is empty!" });
   }
-  if (!errors) {
 
-    // Create a transporter object using SMTP transport
-    let transporter = nodemailer.createTransport({
-      host: process.env.Smtp_host,
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.Smtp_email,
-        pass: process.env.Smtp_passwrod
+  // Create a transporter object using SMTP transport
+  const transporter = nodemailer.createTransport({
+    host: process.env.Smtp_host,
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.Smtp_email,
+      pass: process.env.Smtp_password
+    }
+  });
+
+  const subject = "Contact Inquiry From Website!";
+  const to = 'sharukh24524@gmail.com'; // Admin's email
+
+  // Render EJS template file
+  const emailTemplatePath = path.join(__dirname, '..', 'views', 'template', 'adminInquiry.ejs');
+  ejs.renderFile(emailTemplatePath, { to_email: email, subject: subject, messages: request, mobile: mobile }, (err, data) => {
+    if (err) {
+      console.error('Error rendering email template:', err);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+
+    // Send email
+    sendEmail(transporter, to, subject, data, (error, info) => {
+      if (error) {
+        console.error('Error occurred:', error);
+        return res.status(500).json({ message: 'Error sending email' });
       }
+      console.log('Message sent:', info.response);
+      res.status(200).json({ message: 'Successfully sent the enquiry!', status: "true" });
     });
-
-    const subject = "Contact Inquiry From Website!";
-
-    // Define email options
-    let mailOptions = {
-      from: process.env.Smtp_email,
-      to: 'sharukh24524@gmail.com', //admin mail
-      subject: subject
-    };
-
-    // Render EJS template file
-    const emailTemplatePath = path.join(__dirname, '..', 'views', 'template', 'adminInquiry.ejs');
-
-    // Render EJS template file
-    ejs.renderFile(emailTemplatePath, { to_email: email, subject: subject, messages: request, mobile: mobile }, (err, data) => {
-
-
-      if (err) {
-        console.error('Error rendering email template:', err);
-        res.status(500).json({ message: 'Internal server error' });
-        return;
-      }
-
-      // Set HTML content for email
-      mailOptions.html = data;
-
-      // Send email
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error('Error occurred:', error);
-          res.status(500).json({ message: 'Error sending email' });
-          return;
-        }
-        console.log('Message sent:', info.response);
-        // console.log('Message sent:', info);
-        res.status(200).json({ message: 'Successfully sent the enquiry!', status: "true" });
-
-      });
-    });
-  }
+  });
 });
+
+function sendEmail(transporter, to, subject, html, callback) {
+  transporter.sendMail({
+    from: process.env.Smtp_email,
+    to: to,
+    subject: subject,
+    html: html
+  }, (error, info) => {
+    callback(error, info);
+  });
+}
+// router.post("/contactApiForAmin", function (req, res) {
+
+//   const { email, mobile, request } = req.body;
+
+//   let errors = false;
+
+//   if (email == "") {
+//     errors = true;
+//     res.status(401).json({ message: "Email is empty!" });
+//   } else if (mobile == "") {
+//     errors = true;
+//     res.status(401).json({ message: "Mobile is empty!" });
+//   } else if (request == "") {
+//     errors = true;
+//     res.status(401).json({ message: "Request is empty!" });
+//   }
+//   if (!errors) {
+
+//     // Create a transporter object using SMTP transport
+//     let transporter = nodemailer.createTransport({
+//       host: process.env.Smtp_host,
+//       port: 465,
+//       secure: true,
+//       auth: {
+//         user: process.env.Smtp_email,
+//         pass: process.env.Smtp_passwrod
+//       }
+//     });
+
+//     const subject = "Contact Inquiry From Website!";
+
+//     // Define email options
+//     let mailOptions = {
+//       from: process.env.Smtp_email,
+//       to: 'sharukh24524@gmail.com', //admin mail
+//       subject: subject
+//     };
+
+//     // Render EJS template file
+//     const emailTemplatePath = path.join(__dirname, '..', 'views', 'template', 'adminInquiry.ejs');
+
+//     // Render EJS template file
+//     ejs.renderFile(emailTemplatePath, { to_email: email, subject: subject, messages: request, mobile: mobile }, (err, data) => {
+
+
+//       if (err) {
+//         console.error('Error rendering email template:', err);
+//         res.status(500).json({ message: 'Internal server error' });
+//         return;
+//       }
+
+//       // Set HTML content for email
+//       mailOptions.html = data;
+
+//       // Send email
+//       transporter.sendMail(mailOptions, (error, info) => {
+//         if (error) {
+//           console.error('Error occurred:', error);
+//           res.status(500).json({ message: 'Error sending email' });
+//           return;
+//         }
+//         console.log('Message sent:', info.response);
+//         // console.log('Message sent:', info);
+//         res.status(200).json({ message: 'Successfully sent the enquiry!', status: "true" });
+
+//       });
+//     });
+//   }
+// });
 
 
 //portfolio List
@@ -151,20 +206,20 @@ router.get("/partnerList", function (req, res) {
 });
 
 
-//email function send
-function sendEmail(transporter, form_data, subject, html, callback) {
-  const from_email = process.env.Smtp_email;
-  transporter.sendMail(
-    {
-      from: from_email,
-      to: form_data,
-      subject,
-      html,
-    },
-    (error, info) => {
-      callback(error, info);
-    }
-  );
-}
+// //email function send
+// function sendEmail(transporter, form_data, subject, html, callback) {
+//   const from_email = process.env.Smtp_email;
+//   transporter.sendMail(
+//     {
+//       from: from_email,
+//       to: form_data,
+//       subject,
+//       html,
+//     },
+//     (error, info) => {
+//       callback(error, info);
+//     }
+//   );
+// }
 
 module.exports = router;
