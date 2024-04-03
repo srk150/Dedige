@@ -84,6 +84,34 @@ app.post("/updatePartner", partnerController.updatePartner);
 //   "request": "demo test."
 // }
 
+// [
+//   {
+//       "id": 32,
+//       "type": "4444444444444",
+//       "title": "66666666666666",
+//       "descp": "555555555555555",
+//       "pimg": "pimg-1712145989855-486724559.png",
+//       "logo_image": [
+//           {
+//               "logo": "logo-1712146009408-917225275.png",
+//               "url": "000000000"
+//           },
+//           {
+//               "logo": "logo2-1712146009413-386228914.png",
+//               "url": "1111111111"
+//           },
+//           {
+//               "logo": "logo3-1712146009415-627984900.png",
+//               "url": "22222222222"
+//           },
+//           {
+//               "logo": "logo4-1712146009416-588629047.png",
+//               "url": "333333333"
+//           }
+//       ]
+//   }
+// ]
+
 
 const webApiRoutes = require("./routes/webApi");
 app.use("/webcommon/api", webApiRoutes);

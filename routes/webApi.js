@@ -109,7 +109,26 @@ router.get("/portfolioList", function (req, res) {
       res.status(500).json({ error: 'Internal Server Error' });
 
     } else {
-      res.json(results);
+
+      const transformedResults = results.map(item => ({
+        id: item.id,
+        type: item.type,
+        title: item.title,
+        descp: item.descp,
+        pimg: item.pimg,
+        logo_image: [
+          { logo: item.logo, url: item.url },
+          { logo: item.logo2, url: item.url2 },
+          { logo: item.logo3, url: item.url3 },
+          { logo: item.logo4, url: item.url4 }
+        ]
+
+      }));
+
+
+      res.json(transformedResults);
+
+      // res.json(results);
     }
   });
 

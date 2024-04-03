@@ -50,7 +50,6 @@
                   </thead>
                   <tbody>
                     <% if (portfolioDatas.length> 0) { var i= 1; %> <% portfolioDatas.forEach(portf=> {
-                        const dbimgnames = portf.logo.split(', ');
                         const portfolioimg = portf.pimg.split(', ');
                         %>
                         <tr data-portfolio-id="<%= portf.id %>">
@@ -80,12 +79,22 @@
 
                           <td>
 
-                            <% dbimgnames.forEach(filename=> { %>
-                              <img src="../portfolio/<%= filename %>" width="90px" height="80px"
-                                style="display: inline-block; margin-right: 5px;" class="img-fluid" />
+                            <!-- logo -->
+                            <a href="<%= portf.url %>" target="_blank"><img src="../portfolio/<%= portf.logo %>"
+                                width="90px" height="80px" class="img-fluid"
+                                style="display: inline-block; margin-right: 5px;" /></a>
 
-                              <% }); %>
+                            <a href="<%= portf.url %>" target="_blank"><img src="../portfolio/<%= portf.logo2 %>"
+                                width="90px" height="80px" class="img-fluid"
+                                style="display: inline-block; margin-right: 5px;" /></a>
 
+                            <a href="<%= portf.url %>" target="_blank"><img src="../portfolio/<%= portf.logo3 %>"
+                                width="90px" height="80px" class="img-fluid"
+                                style="display: inline-block; margin-right: 5px;" /></a>
+
+                            <a href="<%= portf.url %>" target="_blank"><img src="../portfolio/<%= portf.logo4 %>"
+                                width="90px" height="80px" class="img-fluid"
+                                style="display: inline-block; margin-right: 5px;" /></a>
 
                           </td>
 

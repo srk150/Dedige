@@ -56,15 +56,77 @@
                         multiple />
                     </div>
 
-                    <div class="form-group">
-                      <label for="exampleInputPassword1">Logo</label>
-                      <input type="file" name="logo" class="form-control" id="logo" accept=".jpg, .jpeg, .png"
-                        multiple />
+                    <!-- logo multiple start -->
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">Logo 1</label>
+                          <input type="file" name="logo" id="logo" class="form-control logo"
+                            accept=".jpg, .jpeg, .png" />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">URL 1</label>
+                          <input type="text" class="form-control url" name="url" id="url" placeholder="Enter URL" />
+                        </div>
+                      </div>
                     </div>
+
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">Logo 2</label>
+                          <input type="file" name="logo2" id="logo2" class="form-control logo"
+                            accept=".jpg, .jpeg, .png" />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">URL 2</label>
+                          <input type="text" class="form-control url" name="url2" id="url2" placeholder="Enter URL" />
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">Logo 3</label>
+                          <input type="file" name="logo3" id="logo3" class="form-control logo"
+                            accept=".jpg, .jpeg, .png" />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">URL 3</label>
+                          <input type="text" class="form-control url" id="url3" name="url3" placeholder="Enter URL" />
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">Logo 4</label>
+                          <input type="file" name="logo4" id="logo4" class="form-control logo"
+                            accept=".jpg, .jpeg, .png" />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">URL 4</label>
+                          <input type="text" class="form-control url" name="url4" id="url4" placeholder="Enter URL" />
+                        </div>
+                      </div>
+                    </div>
+                    <!-- logo multiple end -->
 
                     <div class="form-group">
                       <label for="exampleInputEmail1">Type</label>
-                      <input type="number" class="form-control" name="type" id="type" placeholder="Enter type" />
+                      <input type="text" class="form-control" name="type" id="type" placeholder="Enter type" />
                     </div>
 
 
@@ -90,114 +152,91 @@
       <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
 
       <script>
-        $("#portfolioForm").submit(function (e) {
 
-          e.preventDefault();
+        $(document).ready(function (e) {
 
-          var title = $("#title").val();
-          var descp = $("#descp").val();
-          var type = $("#type").val();
+          $("#portfolioForm").on('submit', (function (e) {
 
-          if (title == '') {
-            $(".alert-danger")
-              .text("Title is required!")
-              .fadeIn()
-              .delay(1000)
-              .fadeOut();
+            e.preventDefault();
 
-            return false;
-          }
+            var logoInput = document.getElementById('logo');
+            var logoFiles = logoInput.files;
+            if (logoFiles.length > 0) {
+              var logoName = logoFiles[0].name;
+              // alert("Selected logo image: " + logoName);
+            } else {
 
-          if (descp == '') {
-            $(".alert-danger")
-              .text("Description is required!")
-              .fadeIn()
-              .delay(1000)
-              .fadeOut();
-
-            return false;
-          }
-
-          if (type == '') {
-            $(".alert-danger")
-              .text("Type is required!")
-              .fadeIn()
-              .delay(1000)
-              .fadeOut();
-
-            return false;
-          }
-
-          var formData = new FormData();
-          formData.append("title", $("#title").val());
-          formData.append("descp", $("#descp").val());
-          formData.append("type", $("#type").val());
-
-          var files = $("#logo")[0].files;
-          for (var i = 0; i < files.length; i++) {
-            formData.append("logo", files[i]);
-          }
-
-          var files2 = $("#pimg")[0].files;
-          for (var i = 0; i < files2.length; i++) {
-            formData.append("pimg", files2[i]);
-          }
-
-          if (files2.length == '0') {
-            $(".alert-danger")
-              .text("Portfolio image is required!")
-              .fadeIn()
-              .delay(1000)
-              .fadeOut();
-
-            return false;
-          }
-
-          if (files.length == '0') {
-            $(".alert-danger")
-              .text("Logo image is required!")
-              .fadeIn()
-              .delay(1000)
-              .fadeOut();
-            return false;
-          }
-
-          // Send AJAX request
-          $.ajax({
-            type: "POST",
-            url: "/insertPortfolio",
-            data: formData,
-            processData: false,
-            contentType: false,
-
-            success: function (response) {
-              // Display success message or redirect to another page
-              if (response) {
-                $(".alert-success")
-                  .text("Add Successfully!")
-                  .fadeIn()
-                  .delay(1000)
-                  .fadeOut();
-
-                $("#pimg").val(""); // Reset image input
-                $("#logo").val(""); // Reset image input
-                $("#portfolioForm")[0].reset();
-              } else {
-                $(".alert-danger")
-                  .text(response.message)
-                  .fadeIn()
-                  .delay(1000)
-                  .fadeOut();
-              }
-            },
-            error: function (err) {
-              // Display error message
               $(".alert-danger")
-                .text(err.responseJSON.message)
+                .text("Please select atleast one logo image")
                 .fadeIn()
                 .delay(1000)
                 .fadeOut();
-            },
-          });
+
+            }
+
+            var logoInput2 = document.getElementById('logo2');
+            var logoFiles2 = logoInput2.files;
+            if (logoFiles2.length > 0) {
+              var logoName2 = logoFiles2[0].name;
+              // alert("Selected logo image: " + logoName);
+            }
+
+            var logoInput3 = document.getElementById('logo3');
+            var logoFiles3 = logoInput3.files;
+            if (logoFiles3.length > 0) {
+              var logoName3 = logoFiles3[0].name;
+              // alert("Selected logo image: " + logoName);
+            }
+
+            var logoInput4 = document.getElementById('logo4');
+            var logoFiles4 = logoInput4.files;
+            if (logoFiles4.length > 0) {
+              var logoName4 = logoFiles4[0].name;
+              // alert("Selected logo image: " + logoName);
+            }
+
+
+            var formData = new FormData(this);
+
+
+            $.ajax({
+              url: "/insertPortfolio",
+              type: "POST",
+              data: formData,
+              contentType: false,
+              processData: false,
+              success: function (response) {
+                if (response) {
+
+                  $(".alert-success")
+                    .text("Add Successfully!")
+                    .fadeIn()
+                    .delay(1000)
+                    .fadeOut();
+
+                  $("#pimg").val(""); // Reset image input
+                  $(".logo").val(""); // Reset image input
+                  $("#portfolioForm")[0].reset();
+                } else {
+
+                  $(".alert-danger")
+                    .text(response.message)
+                    .fadeIn()
+                    .delay(1000)
+                    .fadeOut();
+                }
+              },
+
+              error: function (err) {
+                $(".alert-danger")
+                  .text(err.responseJSON.message)
+                  .fadeIn()
+                  .delay(1000)
+                  .fadeOut();
+              },
+
+            });
+          }));
         });
+
       </script>
