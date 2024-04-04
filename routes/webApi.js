@@ -26,63 +26,143 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-//contact mail for admin
-router.post("/contactApiForAmin", function (req, res) {
+router.post("/contactApiForAdmin", function (req, res) {
+
   const { email, mobile, request } = req.body;
 
-  if (!email) {
-    return res.status(401).json({ message: "Email is empty!" });
-  } else if (!mobile) {
-    return res.status(401).json({ message: "Mobile is empty!" });
-  } else if (!request) {
-    return res.status(401).json({ message: "Request is empty!" });
+  let errors = false;
+
+  if (email == "") {
+    errors = true;
+    res.status(401).json({ message: "Email is empty!" });
+  } else if (mobile == "") {
+    errors = true;
+    res.status(401).json({ message: "Mobile is empty!" });
+  } else if (request == "") {
+    errors = true;
+    res.status(401).json({ message: "Request is empty!" });
   }
+  if (!errors) {
+
+    res.status(200).json({ message: 'Successfully sent the enquiry!', status: "true" });
+
+    // Send email in the background
+    sendEmailInBackground(email, mobile, request);
+
+
+  }
+});
+
+function sendEmailInBackground(email, mobile, request) {
 
   // Create a transporter object using SMTP transport
-  const transporter = nodemailer.createTransport({
+  let transporter = nodemailer.createTransport({
     host: process.env.Smtp_host,
     port: 465,
     secure: true,
     auth: {
       user: process.env.Smtp_email,
-      pass: process.env.Smtp_password
+      pass: process.env.Smtp_passwrod
     }
   });
 
   const subject = "Contact Inquiry From Website!";
-  const to = 'sharukh24524@gmail.com'; // Admin's email
+
+  // Define email options
+  let mailOptions = {
+    from: process.env.Smtp_email,
+    to: 'sharukh24524@gmail.com', //admin mail
+    subject: subject
+  };
 
   // Render EJS template file
   const emailTemplatePath = path.join(__dirname, '..', 'views', 'template', 'adminInquiry.ejs');
+
+  // Render EJS template file
   ejs.renderFile(emailTemplatePath, { to_email: email, subject: subject, messages: request, mobile: mobile }, (err, data) => {
+
+
     if (err) {
       console.error('Error rendering email template:', err);
-      return res.status(500).json({ message: 'Internal server error' });
+      res.status(500).json({ message: 'Internal server error' });
+      return;
     }
 
+    // Set HTML content for email
+    mailOptions.html = data;
+
     // Send email
-    sendEmail(transporter, to, subject, data, (error, info) => {
+    transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error('Error occurred:', error);
-        return res.status(500).json({ message: 'Error sending email' });
+        res.status(500).json({ message: 'Error sending email' });
+        return;
       }
       console.log('Message sent:', info.response);
-      res.status(200).json({ message: 'Successfully sent the enquiry!', status: "true" });
+      // console.log('Message sent:', info);
+      // res.status(200).json({ message: 'Successfully sent the enquiry!', status: "true" });
+
     });
   });
+
+}
+
+
+//portfolio List
+router.get("/portfolioList", function (req, res) {
+
+  const query = 'SELECT * FROM portfolio ORDER BY id ASC';
+
+  dbConn.query(query, (err, results) => {
+    if (err) {
+      console.error('Error executing portfolio query:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+
+    } else {
+
+      const transformedResults = results.map(item => ({
+        id: item.id,
+        type: item.type,
+        title: item.title,
+        descp: item.descp,
+        pimg: item.pimg,
+        logo_image: [
+          { logo: item.logo, url: item.url },
+          { logo: item.logo2, url: item.url2 },
+          { logo: item.logo3, url: item.url3 },
+          { logo: item.logo4, url: item.url4 }
+        ]
+
+      }));
+
+
+      res.json(transformedResults);
+
+      // res.json(results);
+    }
+  });
+
 });
 
-function sendEmail(transporter, to, subject, html, callback) {
-  transporter.sendMail({
-    from: process.env.Smtp_email,
-    to: to,
-    subject: subject,
-    html: html
-  }, (error, info) => {
-    callback(error, info);
+//partnerList 
+router.get("/partnerList", function (req, res) {
+
+  const query = 'SELECT * FROM partners ORDER BY pid ASC';
+
+  dbConn.query(query, (err, results) => {
+    if (err) {
+      console.error('Error executing partners query:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(results);
+    }
   });
-}
-// router.post("/contactApiForAmin", function (req, res) {
+
+});
+
+
+//old contact email
+// router.post("/contactApiForAdmin", function (req, res) {
 
 //   const { email, mobile, request } = req.body;
 
@@ -153,73 +233,20 @@ function sendEmail(transporter, to, subject, html, callback) {
 // });
 
 
-//portfolio List
-router.get("/portfolioList", function (req, res) {
-
-  const query = 'SELECT * FROM portfolio ORDER BY id ASC';
-
-  dbConn.query(query, (err, results) => {
-    if (err) {
-      console.error('Error executing portfolio query:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
-
-    } else {
-
-      const transformedResults = results.map(item => ({
-        id: item.id,
-        type: item.type,
-        title: item.title,
-        descp: item.descp,
-        pimg: item.pimg,
-        logo_image: [
-          { logo: item.logo, url: item.url },
-          { logo: item.logo2, url: item.url2 },
-          { logo: item.logo3, url: item.url3 },
-          { logo: item.logo4, url: item.url4 }
-        ]
-
-      }));
-
-
-      res.json(transformedResults);
-
-      // res.json(results);
+// email function send
+function sendEmail(transporter, form_data, subject, html, callback) {
+  const from_email = process.env.Smtp_email;
+  transporter.sendMail(
+    {
+      from: from_email,
+      to: form_data,
+      subject,
+      html,
+    },
+    (error, info) => {
+      callback(error, info);
     }
-  });
-
-});
-
-//partnerList 
-router.get("/partnerList", function (req, res) {
-
-  const query = 'SELECT * FROM partners ORDER BY pid ASC';
-
-  dbConn.query(query, (err, results) => {
-    if (err) {
-      console.error('Error executing partners query:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
-    } else {
-      res.json(results);
-    }
-  });
-
-});
-
-
-// //email function send
-// function sendEmail(transporter, form_data, subject, html, callback) {
-//   const from_email = process.env.Smtp_email;
-//   transporter.sendMail(
-//     {
-//       from: from_email,
-//       to: form_data,
-//       subject,
-//       html,
-//     },
-//     (error, info) => {
-//       callback(error, info);
-//     }
-//   );
-// }
+  );
+}
 
 module.exports = router;
