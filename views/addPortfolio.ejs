@@ -44,17 +44,49 @@
                       <input type="text" class="form-control" name="title" id="title" placeholder="Enter Title" />
                     </div>
 
-                    <div class="form-group">
-                      <label for="exampleInputEmail1"> Description </label>
-                      <textarea class="form-control" name="descp" id="descp" placeholder="Enter Description"></textarea>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputEmail1"> Description </label>
+                          <textarea class="form-control" name="descp" id="descp"
+                            placeholder="Enter Description"></textarea>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputEmail1"> Summary(Optional) </label>
+                          <textarea class="form-control" name="summary" id="summary"
+                            placeholder="Enter Summary(Optional)"></textarea>
+                        </div>
+                      </div>
                     </div>
 
 
-                    <div class="form-group">
-                      <label for="exampleInputPassword1">Image</label>
-                      <input type="file" name="pimg" class="form-control" id="pimg" accept=".jpg, .jpeg, .png, .mp4"
-                        multiple />
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">Image</label>
+                          <input type="file" name="pimg" class="form-control" id="pimg" accept=".jpg, .jpeg, .png, .mp4"
+                            multiple />
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">Type</label>
+                          <!-- <input type="text" class="form-control" name="type" id="type" placeholder="Enter type" /> -->
+                          <select class="form-control" name="type" id="type">
+                            <option value="">Select</option>
+                            <option value="left">Left</option>
+                            <option value="right">Right</option>
+                            <option value="center">Center</option>
+                            <option value="video">Video</option>
+                          </select>
+                        </div>
+                      </div>
                     </div>
+
 
                     <!-- logo multiple start -->
                     <div class="row">
@@ -124,12 +156,6 @@
                     </div>
                     <!-- logo multiple end -->
 
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Type</label>
-                      <input type="text" class="form-control" name="type" id="type" placeholder="Enter type" />
-                    </div>
-
-
                   </div>
                   <!-- /.card-body -->
 
@@ -164,14 +190,6 @@
             if (logoFiles.length > 0) {
               var logoName = logoFiles[0].name;
               // alert("Selected logo image: " + logoName);
-            } else {
-
-              $(".alert-danger")
-                .text("Please select atleast one logo image")
-                .fadeIn()
-                .delay(1000)
-                .fadeOut();
-
             }
 
             var logoInput2 = document.getElementById('logo2');

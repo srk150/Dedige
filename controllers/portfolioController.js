@@ -284,7 +284,7 @@ const insertPortfolio = (req, res) => {
       return res.status(500).json({ message: "An error occurred during file upload." });
     }
 
-    const { title, descp, type, url, url2, url3, url4 } = req.body;
+    const { title, descp, summary, type, url, url2, url3, url4 } = req.body;
 
     if (!title || !descp || !type) {
       return res.status(400).json({ message: "Title, description, and type are required fields." });
@@ -301,9 +301,8 @@ const insertPortfolio = (req, res) => {
       return res.status(400).json({ message: "Portfolio images are required." });
     }
 
-    const pimgFilenames = pimgFiles.map(file => file.filename);
-    const logoFilenames = logoFiles.map(file => file.filename);
-
+    const pimgFilenames = pimgFiles && pimgFiles.length > 0 ? pimgFiles.map(file => file.filename) : ['noImg.png'];
+    const logoFilenames = logoFiles && logoFiles.length > 0 ? logoFiles.map(file => file.filename) : ['noImg.png'];
 
     const logoFilenames2 = logoFiles2 && logoFiles2.length > 0 ? logoFiles2.map(file => file.filename) : ['noImg.png'];
     const logoFilenames3 = logoFiles3 && logoFiles3.length > 0 ? logoFiles3.map(file => file.filename) : ['noImg.png'];
@@ -322,8 +321,8 @@ const insertPortfolio = (req, res) => {
       }
 
       // Insert new portfolio entry
-      const sql = "INSERT INTO portfolio (title, descp, type, url, url2, url3, url4, logo, logo2, logo3, logo4, pimg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      const values = [title, descp, type, url, url2, url3, url4, logoFilenames, logoFilenames2, logoFilenames3, logoFilenames4, pimgFilenames.join(', ')];
+      const sql = "INSERT INTO portfolio (title, descp,summary, type, url, url2, url3, url4, logo, logo2, logo3, logo4, pimg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      const values = [title, descp, summary, type, url, url2, url3, url4, logoFilenames, logoFilenames2, logoFilenames3, logoFilenames4, pimgFilenames.join(', ')];
 
       dbConn.query(sql, values, function (err, result) {
         if (err) {
@@ -348,7 +347,7 @@ const updatePortfolio = function (req, res) {
     }
 
 
-    const { title, descp, pid, type, url, url2, url3, url4 } = req.body;
+    const { title, descp, summary, pid, type, url, url2, url3, url4 } = req.body;
 
 
     if (!title || !descp || !type) {
@@ -382,14 +381,58 @@ const updatePortfolio = function (req, res) {
         const pimgFilenames = pimgFiles.map(file => file.filename);
         newPimg = pimgFilenames.join(', ');
 
+        // remove img when update it
+        const dbimgnames = portfolioData.pimg.split(', ');
+        dbimgnames.forEach(filename => {
+          const imagePath = `./public/portfolio/${filename}`;
+          if (filename != "noImg.png") {
+            deleteImageFile(imagePath);
+          }
+        });
+        // end remove function
+
       } else {
 
         newPimg = portfolioData.pimg;
 
       }
 
-      const logoFilenames = logoFiles && logoFiles.length > 0 ? logoFiles.map(file => file.filename) : portfolioData.logo;
 
+      //remove logo1 2 3 4 when update
+      if (logoFiles && logoFiles.length > 0) {
+        const imagePath22 = `./public/portfolio/${portfolioData.logo}`;
+        if (portfolioData.logo != "noImg.png") {
+          deleteImageFile(imagePath22);
+        }
+
+      }
+
+      if (logoFiles2 && logoFiles2.length > 0) {
+        const imagePath23 = `./public/portfolio/${portfolioData.logo2}`;
+        if (portfolioData.logo2 != "noImg.png") {
+          deleteImageFile(imagePath23);
+        }
+
+      }
+
+      if (logoFiles3 && logoFiles3.length > 0) {
+        const imagePath24 = `./public/portfolio/${portfolioData.logo3}`;
+        if (portfolioData.logo3 != "noImg.png") {
+          deleteImageFile(imageimagePath24Path2);
+        }
+
+      }
+
+      if (logoFiles4 && logoFiles4.length > 0) {
+        const imagePath25 = `./public/portfolio/${portfolioData.logo4}`;
+        if (portfolioData.logo4 != "noImg.png") {
+          deleteImageFile(imagePath25);
+        }
+
+      }
+      // end
+
+      const logoFilenames = logoFiles && logoFiles.length > 0 ? logoFiles.map(file => file.filename) : portfolioData.logo;
       const logoFilenames2 = logoFiles2 && logoFiles2.length > 0 ? logoFiles2.map(file => file.filename) : portfolioData.logo2;
       const logoFilenames3 = logoFiles3 && logoFiles3.length > 0 ? logoFiles3.map(file => file.filename) : portfolioData.logo3;
       const logoFilenames4 = logoFiles4 && logoFiles4.length > 0 ? logoFiles4.map(file => file.filename) : portfolioData.logo4;
@@ -406,8 +449,8 @@ const updatePortfolio = function (req, res) {
         }
 
         // Update portfolio entry
-        const sql = "UPDATE portfolio SET title = ?, descp = ?, type = ?, url = ?, url2 = ?, url3 = ?, url4 = ?, logo = ?, logo2 = ?, logo3 = ?, logo4 = ?, pimg = ? WHERE id = ?";
-        const values = [title, descp, type, url, url2, url3, url4, logoFilenames, logoFilenames2, logoFilenames3, logoFilenames4, newPimg, pid];
+        const sql = "UPDATE portfolio SET title = ?, descp = ?, summary = ?, type = ?, url = ?, url2 = ?, url3 = ?, url4 = ?, logo = ?, logo2 = ?, logo3 = ?, logo4 = ?, pimg = ? WHERE id = ?";
+        const values = [title, descp, summary, type, url, url2, url3, url4, logoFilenames, logoFilenames2, logoFilenames3, logoFilenames4, newPimg, pid];
 
         dbConn.query(sql, values, function (err, result) {
           if (err) {

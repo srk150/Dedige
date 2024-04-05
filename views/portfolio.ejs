@@ -80,21 +80,30 @@
                           <td>
 
                             <!-- logo -->
-                            <a href="<%= portf.url %>" target="_blank"><img src="../portfolio/<%= portf.logo %>"
-                                width="90px" height="80px" class="img-fluid"
-                                style="display: inline-block; margin-right: 5px;" /></a>
 
-                            <a href="<%= portf.url %>" target="_blank"><img src="../portfolio/<%= portf.logo2 %>"
-                                width="90px" height="80px" class="img-fluid"
-                                style="display: inline-block; margin-right: 5px;" /></a>
+                            <% if(portf.logo !='noImg.png' ) { %>
+                              <a href="<%= portf.url %>" target="_blank"><img src="../portfolio/<%= portf.logo %>"
+                                  width="90px" height="80px" class="img-fluid"
+                                  style="display: inline-block; margin-right: 5px;" /></a>
+                              <% } %>
 
-                            <a href="<%= portf.url %>" target="_blank"><img src="../portfolio/<%= portf.logo3 %>"
-                                width="90px" height="80px" class="img-fluid"
-                                style="display: inline-block; margin-right: 5px;" /></a>
+                                <% if(portf.logo2 !='noImg.png' ) { %>
 
-                            <a href="<%= portf.url %>" target="_blank"><img src="../portfolio/<%= portf.logo4 %>"
-                                width="90px" height="80px" class="img-fluid"
-                                style="display: inline-block; margin-right: 5px;" /></a>
+                                  <a href="<%= portf.url %>" target="_blank"><img src="../portfolio/<%= portf.logo2 %>"
+                                      width="90px" height="80px" class="img-fluid"
+                                      style="display: inline-block; margin-right: 5px;" /></a>
+                                  <% } %>
+                                    <% if(portf.logo3 !='noImg.png' ) { %>
+
+                                      <a href="<%= portf.url %>" target="_blank"><img
+                                          src="../portfolio/<%= portf.logo3 %>" width="90px" height="80px"
+                                          class="img-fluid" style="display: inline-block; margin-right: 5px;" /></a>
+                                      <% } %>
+                                        <% if(portf.logo4 !='noImg.png' ) { %>
+                                          <a href="<%= portf.url %>" target="_blank"><img
+                                              src="../portfolio/<%= portf.logo4 %>" width="90px" height="80px"
+                                              class="img-fluid" style="display: inline-block; margin-right: 5px;" /></a>
+                                          <% } %>
 
                           </td>
 

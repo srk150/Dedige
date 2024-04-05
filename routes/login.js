@@ -13,76 +13,45 @@ router.get("/logout", function (req, res) {
 
 //login using routes for ajax function
 router.post("/", (req, res) => {
-  const { email, password, remember_me } = req.body;
+  const { email, password } = req.body;
 
-  let errors = false;
+  if (!email || email.trim() === "") {
+    return res.status(401).json({ message: "Email is empty!" });
 
-  if (email == "") {
-    errors = true;
-    res.status(401).json({ message: "Email is empty!" });
-  } else if (password == "") {
-    errors = true;
-    res.status(401).json({ message: "Password is empty!" });
+  } else if (!password || password.trim() === "") {
+
+    return res.status(401).json({ message: "Password is empty!" });
   }
-  //  else if (remember_me != "1") {
-  //   errors = true;
-  //   res.status(401).json({ message: "Please select remember me!" });
-  // }
 
-  if (!errors) {
-    dbConn.query(
-      "SELECT * FROM auth WHERE email =" + "'" + email + "'",
-      function (err, rows, fields) {
-        if (err) throw err;
-
-        // if user not found
-        if (rows.length <= 0) {
-          res.status(401).json({ message: "Invalid Email!" });
-        }
-        // if user found
-        else {
-          let udata = rows[0];
-          let roweId = udata.id;
-          let rowemail = udata.email;
-          let rowname = udata.name;
-          let rowpass = udata.password;
-          let rowprofile = udata.profile;
-          let rowRole = udata.role;
-
-          bcrypt.compare(password, rowpass).then((isMatch) => {
-            if (isMatch === false) {
-              res.status(401).json({ message: "Incorrect Password!" });
-            } else {
-              if (remember_me) {
-                req.session.adminRole = rowRole;
-                req.session.userId = roweId;
-                req.session.email = rowemail;
-                req.session.name = rowname;
-                req.session.profile = rowprofile;
-                req.session.loggedin = true;
-              } else {
-                req.session.adminRole = rowRole;
-                req.session.userId = roweId;
-                req.session.email = rowemail;
-                req.session.name = rowname;
-                req.session.profile = rowprofile;
-                req.session.loggedin = true;
-              }
-
-              // req.session.userId = "";
-              // req.session.adminRole = "";
-              // req.session.email = "";
-              // req.session.name = "";
-              // req.session.profile = "";
-              // req.session.loggedin = "";
-
-              res.json({ message: true });
-            }
-          });
-        }
+  dbConn.query(
+    "SELECT * FROM auth WHERE email = ?",
+    [email],
+    function (err, rows, fields) {
+      if (err) {
+        return res.status(500).json({ message: "Internal Server Error" });
       }
-    );
-  }
+
+      if (rows.length <= 0) {
+        return res.status(401).json({ message: "Invalid Email!" });
+      }
+
+      const user = rows[0];
+
+      bcrypt.compare(password, user.password).then((isMatch) => {
+        if (!isMatch) {
+          return res.status(401).json({ message: "Incorrect Password!" });
+        }
+
+        req.session.adminRole = user.role;
+        req.session.userId = user.id;
+        req.session.email = user.email;
+        req.session.name = user.name;
+        req.session.profile = user.profile;
+        req.session.loggedin = true;
+
+        return res.json({ message: "Login successful" });
+      });
+    });
 });
 
 module.exports = router;
