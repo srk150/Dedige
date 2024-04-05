@@ -1,0 +1,12 @@
+# Environment variables.
+PORT = 3000
+baseUrl  = http://localhost:3000
+
+Smtp_host = mail.didige.in
+Smtp_email = info@didige.in
+Smtp_passwrod = didige12345
+
+DB_HOST = localhost
+DB_USER = root
+DB_PASSWORD = 
+DB_NAME = portfolio_web
