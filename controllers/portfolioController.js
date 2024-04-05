@@ -301,12 +301,12 @@ const insertPortfolio = (req, res) => {
       return res.status(400).json({ message: "Portfolio images are required." });
     }
 
-    const pimgFilenames = pimgFiles && pimgFiles.length > 0 ? pimgFiles.map(file => file.filename) : ['noImg.png'];
-    const logoFilenames = logoFiles && logoFiles.length > 0 ? logoFiles.map(file => file.filename) : ['noImg.png'];
+    const pimgFilenames = pimgFiles && pimgFiles.length > 0 ? pimgFiles.map(file => file.filename) : '';
+    const logoFilenames = logoFiles && logoFiles.length > 0 ? logoFiles.map(file => file.filename) : '';
 
-    const logoFilenames2 = logoFiles2 && logoFiles2.length > 0 ? logoFiles2.map(file => file.filename) : ['noImg.png'];
-    const logoFilenames3 = logoFiles3 && logoFiles3.length > 0 ? logoFiles3.map(file => file.filename) : ['noImg.png'];
-    const logoFilenames4 = logoFiles4 && logoFiles4.length > 0 ? logoFiles4.map(file => file.filename) : ['noImg.png'];
+    const logoFilenames2 = logoFiles2 && logoFiles2.length > 0 ? logoFiles2.map(file => file.filename) : '';
+    const logoFilenames3 = logoFiles3 && logoFiles3.length > 0 ? logoFiles3.map(file => file.filename) : '';
+    const logoFilenames4 = logoFiles4 && logoFiles4.length > 0 ? logoFiles4.map(file => file.filename) : '';
 
 
     // Check if portfolio with the same title already exists
